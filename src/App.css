@@ -1,0 +1,20 @@
+/* Specific styles for App layout */
+.app-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at top right, #1e1b4b, var(--bg-primary) 50%);
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
