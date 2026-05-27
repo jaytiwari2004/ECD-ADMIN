@@ -10,9 +10,15 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import RestaurantOverview from './pages/Restaurants/RestaurantOverview';
 import RestaurantOnboard from './pages/Restaurants/RestaurantOnboard';
 import MenuManagement from './pages/Restaurants/MenuManagement';
+import RestaurantPayouts from './pages/Restaurants/RestaurantPayouts';
+import SpecialDishes from './pages/Restaurants/SpecialDishes';
 import AdminLogin from './pages/Auth/AdminLogin';
 import RiderPayouts from './pages/Riders/RiderPayouts';
 import RiderDetails from './pages/Riders/RiderDetails';
+import RiderOrders from './pages/Riders/RiderOrders';
+import BlockedAccounts from './pages/Admin/BlockedAccounts';
+import Settings from './pages/Settings/Settings';
+import UsersList from './pages/Users/UsersList';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
@@ -44,8 +50,14 @@ function App() {
                     <Route path="/restaurants/onboard" element={<RestaurantOnboard />} />
                     <Route path="/restaurants/menu" element={<MenuManagement />} />
                     <Route path="/restaurants/:id/menu" element={<MenuManagement />} />
+                    <Route path="/restaurants/payouts" element={<RestaurantPayouts />} />
+                    <Route path="/restaurants/special-dishes" element={<SpecialDishes />} />
                     <Route path="/riders/details" element={<RiderDetails />} />
                     <Route path="/riders/payouts" element={<RiderPayouts />} />
+                    <Route path="/riders/orders" element={<RiderOrders />} />
+                    <Route path="/system/blocked-accounts" element={<BlockedAccounts />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/users" element={<UsersList />} />
                   </Routes>
                 </div>
               </div>

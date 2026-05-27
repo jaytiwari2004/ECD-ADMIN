@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, Search, UserCircle, LogOut } from 'lucide-react';
+import { UserCircle, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './Topbar.css';
 
@@ -27,17 +27,12 @@ const Topbar = () => {
   };
 
   return (
-    <header className="topbar glass-panel" style={{ position: 'relative', zIndex: 50 }}>
-      <div className="search-bar">
-        <Search className="search-icon" size={18} />
-        <input type="text" placeholder="Search..." className="search-input" />
+    <header className="topbar glass-panel" style={{ position: 'relative', zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="topbar-logo" style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '2px', color: 'var(--text-primary)' }}>
+        ECD KART
       </div>
 
       <div className="topbar-actions">
-        <button className="icon-btn">
-          <Bell size={20} />
-          <span className="badge"></span>
-        </button>
         <div style={{ position: 'relative' }}>
           <div className="profile-btn" onClick={() => setShowDropdown(!showDropdown)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <UserCircle size={32} className="avatar-icon" />

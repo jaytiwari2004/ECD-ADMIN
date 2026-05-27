@@ -23,6 +23,7 @@ const RestaurantOnboard = () => {
   
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [upi, setUpi] = useState('');
   const [location, setLocation] = useState('');
   const [mapLat, setMapLat] = useState('');
   const [mapLng, setMapLng] = useState('');
@@ -96,6 +97,7 @@ const RestaurantOnboard = () => {
           accountDetail: licenseUrl, // Using accountDetail for license/documents per schema
           restaurantId: restaurantId || undefined,
           restaurantKey: restaurantKey || undefined,
+          upi: upi || undefined,
         })
       });
 
@@ -195,6 +197,14 @@ const RestaurantOnboard = () => {
                 <div className="input-with-icon">
                   <Phone size={18} className="input-icon" />
                   <input type="tel" placeholder="+1 (555) 000-0000" value={phone} onChange={e => setPhone(e.target.value)} required />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>UPI Key / ID</label>
+                <div className="input-with-icon">
+                  <KeyRound size={18} className="input-icon" />
+                  <input type="text" placeholder="e.g. restaurant@upi" value={upi} onChange={e => setUpi(e.target.value)} required />
                 </div>
               </div>
             </div>

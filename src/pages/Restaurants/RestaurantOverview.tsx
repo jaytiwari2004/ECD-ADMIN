@@ -50,6 +50,21 @@ const RestaurantOverview = () => {
     }
   };
 
+  const deleteRestaurant = async (e: React.MouseEvent, id: string, name: string) => {
+    e.stopPropagation();
+    if (window.confirm(`Are you sure you want to completely delete "${name}"? This action cannot be undone.`)) {
+      try {
+        await apiFetch(`/admin/restaurants/${id}`, {
+          method: 'DELETE'
+        });
+        setRestaurants(restaurants.filter(r => r._id !== id));
+        alert("Restaurant successfully deleted");
+      } catch (error: any) {
+        alert(error.message || "Failed to delete restaurant");
+      }
+    }
+  };
+
   const handleCardClick = (restaurant: Restaurant) => {
     navigate(`/restaurants/${restaurant._id}/menu`);
   };
@@ -103,21 +118,38 @@ const RestaurantOverview = () => {
                     <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Click to manage menu</p>
                   </div>
                 </div>
-                <button 
-                  onClick={(e) => toggleStatus(e, restaurant._id, restaurant.isActive)}
-                  style={{ 
-                    padding: '0.3rem 0.6rem', 
-                    borderRadius: '20px', 
-                    fontSize: '0.75rem', 
-                    fontWeight: 600,
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: restaurant.isActive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                    color: restaurant.isActive ? '#10b981' : '#ef4444'
-                  }}
-                >
-                  {restaurant.isActive ? 'Online' : 'Offline'}
-                </button>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button 
+                    onClick={(e) => toggleStatus(e, restaurant._id, restaurant.isActive)}
+                    style={{ 
+                      padding: '0.3rem 0.6rem', 
+                      borderRadius: '20px', 
+                      fontSize: '0.75rem', 
+                      fontWeight: 600,
+                      border: 'none',
+                      cursor: 'pointer',
+                      background: restaurant.isActive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                      color: restaurant.isActive ? '#10b981' : '#ef4444'
+                    }}
+                  >
+                    {restaurant.isActive ? 'Online' : 'Offline'}
+                  </button>
+                  <button
+                    onClick={(e) => deleteRestaurant(e, restaurant._id, restaurant.name)}
+                    style={{
+                      padding: '0.3rem 0.6rem',
+                      borderRadius: '20px',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      border: '1px solid #ef4444',
+                      cursor: 'pointer',
+                      background: 'transparent',
+                      color: '#ef4444'
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>

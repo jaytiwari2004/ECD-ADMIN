@@ -107,15 +107,35 @@ const RiderDetails = () => {
     }
   };
 
+  const handleAvatarUpload = async (file: File) => {
+    if (!selectedRider) return;
+    setIsUpdating(true);
+    try {
+      const url = await uploadFile(file);
+      const data = await apiFetch(`/admin/users/${selectedRider._id}/details`, {
+        method: 'PATCH',
+        body: JSON.stringify({ avatar: url }),
+      });
+      setSelectedRider({ ...selectedRider, avatar: url });
+      setRiders(riders.map(r => r._id === selectedRider._id ? data.user : r));
+      alert('Profile picture updated successfully!');
+    } catch (err: any) {
+      alert(err.message || 'Failed to upload profile picture');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const handleMessageRider = () => {
     if (!selectedRider?.phone) return;
-    // Basic formatting for WA (assuming India +91 if not present)
-    let phone = selectedRider.phone;
-    if (!phone.startsWith('+')) {
-      phone = '+91' + phone;
+    
+    let cleanPhone = selectedRider.phone.replace(/\D/g, '');
+    if (cleanPhone.length === 10) {
+      cleanPhone = '91' + cleanPhone; // Assume India if 10 digits
     }
+    
     const msg = encodeURIComponent(`Hello ${selectedRider.name || 'Rider'}, regarding your ECD Driver account onboarding...`);
-    window.open(`https://wa.me/${phone.replace('+', '')}?text=${msg}`, '_blank');
+    window.open(`https://wa.me/${cleanPhone}?text=${msg}`, '_blank');
   };
 
   return (
@@ -205,8 +225,33 @@ const RiderDetails = () => {
               </div>
 
               <div className="documents-section">
-                <h3>Uploaded Documents</h3>
+                <h3>Profile & Documents</h3>
                 <div className="docs-grid">
+                  
+                  {/* Profile Picture */}
+                  <div className="doc-card">
+                    <h4>Profile Picture</h4>
+                    {selectedRider.avatar ? (
+                      <img 
+                        src={selectedRider.avatar} 
+                        alt="Profile Picture" 
+                        onClick={() => setFullscreenImage(selectedRider.avatar || null)}
+                      />
+                    ) : (
+                      <div className="no-doc">Not Uploaded</div>
+                    )}
+                    <label className="edit-doc-btn">
+                      {isUpdating ? 'Uploading...' : 'Upload Image'}
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        hidden 
+                        onChange={(e) => e.target.files?.[0] && handleAvatarUpload(e.target.files[0])}
+                        disabled={isUpdating}
+                      />
+                    </label>
+                  </div>
+
                   {/* Aadhar Front */}
                   <div className="doc-card">
                     <h4>Aadhar Front</h4>

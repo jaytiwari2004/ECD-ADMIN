@@ -10,6 +10,7 @@ interface WithdrawalRequest {
     phone: string;
     riderId?: string;
     upi?: string;
+    walletBalance?: number;
   };
   amount: number;
   status: 'pending' | 'approved' | 'rejected';
@@ -148,6 +149,9 @@ const RiderPayouts = () => {
               <div className="upi-highlight">
                 <p><strong>UPI ID:</strong> {selectedRequest.driver?.upi || <span className="error-text">No UPI ID Provided by Rider</span>}</p>
               </div>
+              <p style={{ margin: '10px 0', fontSize: '1.1rem' }}>
+                <strong>Current Wallet Balance:</strong> ₹{selectedRequest.driver?.walletBalance?.toFixed(2) || '0.00'}
+              </p>
               <div className="amount-highlight">
                 <p><strong>Amount to Pay:</strong> ₹{selectedRequest.amount}</p>
               </div>
