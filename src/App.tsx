@@ -16,6 +16,7 @@ import AdminLogin from './pages/Auth/AdminLogin';
 import RiderPayouts from './pages/Riders/RiderPayouts';
 import RiderDetails from './pages/Riders/RiderDetails';
 import RiderOrders from './pages/Riders/RiderOrders';
+import RiderSystemManage from './pages/Riders/RiderSystemManage';
 import BlockedAccounts from './pages/Admin/BlockedAccounts';
 import Settings from './pages/Settings/Settings';
 import UsersList from './pages/Users/UsersList';
@@ -55,6 +56,7 @@ function App() {
                     <Route path="/riders/details" element={<RiderDetails />} />
                     <Route path="/riders/payouts" element={<RiderPayouts />} />
                     <Route path="/riders/orders" element={<RiderOrders />} />
+                    <Route path="/riders/system-manage" element={<RiderSystemManage />} />
                     <Route path="/system/blocked-accounts" element={<BlockedAccounts />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/users" element={<UsersList />} />

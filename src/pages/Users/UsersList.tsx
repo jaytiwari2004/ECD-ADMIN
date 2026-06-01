@@ -6,6 +6,7 @@ interface CustomerSummary {
   _id: string;
   name?: string;
   phone: string;
+  role?: string;
   orderCount: number;
   addresses?: any[];
 }
@@ -24,15 +25,15 @@ const UsersList = () => {
   const [users, setUsers] = useState<CustomerSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // COD Toggle State
+  const [isCodEnabled, setIsCodEnabled] = useState<boolean>(true);
+  const [savingCod, setSavingCod] = useState(false);
 
   // Modal State
   const [selectedUser, setSelectedUser] = useState<CustomerSummary | null>(null);
   const [history, setHistory] = useState<OrderHistory[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -46,6 +47,22 @@ const UsersList = () => {
       setLoading(false);
     }
   };
+
+  const fetchSettings = async () => {
+    try {
+      const settingsRes = await apiFetch('/admin/delivery-settings');
+      if (settingsRes.settings && settingsRes.settings.isCodEnabled !== undefined) {
+          setIsCodEnabled(settingsRes.settings.isCodEnabled);
+      }
+    } catch (err) {
+      console.error('Failed to fetch COD settings', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+    fetchSettings();
+  }, []);
 
   const openHistory = async (user: CustomerSummary) => {
     setSelectedUser(user);
@@ -61,6 +78,23 @@ const UsersList = () => {
     }
   };
 
+  const toggleCod = async (enabled: boolean) => {
+    try {
+      setSavingCod(true);
+      setIsCodEnabled(enabled);
+      await apiFetch('/admin/delivery-settings', {
+          method: 'PUT',
+          body: JSON.stringify({ isCodEnabled: enabled })
+      });
+    } catch (error) {
+      console.error('Failed to save COD setting:', error);
+      alert('Error saving COD setting.');
+      setIsCodEnabled(!enabled); // revert on failure
+    } finally {
+      setSavingCod(false);
+    }
+  };
+
   const closeHistory = () => {
     setSelectedUser(null);
     setHistory([]);
@@ -72,7 +106,7 @@ const UsersList = () => {
   return (
     <div className="users-list-container">
       <div className="users-header">
-        <h1>Users Management</h1>
+        <h1>User Management System</h1>
         <p>View registered customers and their order history.</p>
       </div>
 
@@ -84,6 +118,34 @@ const UsersList = () => {
         <div className="stat-item">
           <span className="stat-label">Active Users (With Orders)</span>
           <span className="stat-value">{users.filter(u => u.orderCount > 0).length}</span>
+        </div>
+        <div className="stat-item" style={{ flex: '1', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '1.5rem', 
+              background: isCodEnabled ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
+              padding: '1rem 1.5rem', 
+              borderRadius: '12px', 
+              border: `2px solid ${isCodEnabled ? '#10b981' : '#ef4444'}`,
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+          }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>Cash on Delivery</span>
+                  <span style={{ fontSize: '0.9rem', color: isCodEnabled ? '#10b981' : '#ef4444', fontWeight: 600 }}>
+                      {savingCod ? 'Saving...' : (isCodEnabled ? 'Currently ENABLED' : 'Currently DISABLED')}
+                  </span>
+              </div>
+              <label className="switch" style={{ margin: 0, transform: 'scale(1.3)' }}>
+                  <input 
+                      type="checkbox" 
+                      checked={isCodEnabled}
+                      onChange={(e) => toggleCod(e.target.checked)}
+                      disabled={savingCod}
+                  />
+                  <span className="slider round" style={{ backgroundColor: isCodEnabled ? '#10b981' : '#ccc' }}></span>
+              </label>
+          </div>
         </div>
       </div>
 
@@ -98,6 +160,7 @@ const UsersList = () => {
           <table className="users-table">
             <thead>
               <tr>
+                <th>Customer ID</th>
                 <th>Customer Name</th>
                 <th>Phone Number</th>
                 <th>Primary Address</th>
@@ -110,6 +173,7 @@ const UsersList = () => {
                 const primaryAddress = user.addresses && user.addresses.length > 0 ? user.addresses[0].address : 'No address provided';
                 return (
                   <tr key={user._id}>
+                    <td><span style={{ fontFamily: 'monospace', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{user._id}</span></td>
                     <td>
                       <div className="user-name">{user.name || 'Unknown'}</div>
                     </td>
