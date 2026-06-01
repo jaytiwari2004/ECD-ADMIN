@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { apiFetch, uploadFile } from '../../utils/api';
 import './RiderDetails.css';
 
@@ -9,6 +9,7 @@ interface Rider {
   riderId?: string;
   isVerified: boolean;
   status: 'pending' | 'active' | 'suspended';
+  avatar?: string;
   documents?: {
     aadharFront?: string;
     aadharBack?: string;

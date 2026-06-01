@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DollarSign, CreditCard, Bike, Activity, Store } from 'lucide-react';
+import { DollarSign, Bike, Activity, Store } from 'lucide-react';
 import { apiFetch } from '../../utils/api';
 import './Dashboard.css';
 

@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { UserCircle, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import './Topbar.css';
 
 const Topbar = () => {
-  const navigate = useNavigate();
   const [adminName, setAdminName] = useState('Admin');
   const [showDropdown, setShowDropdown] = useState(false);
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Shield, CreditCard, FileText, LogOut, ChevronRight } from 'lucide-react';
 import './Settings.css';
 
