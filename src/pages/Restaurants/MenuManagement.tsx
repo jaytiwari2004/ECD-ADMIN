@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { apiFetch, uploadFile } from '../../utils/api';
-import { Plus, Image as ImageIcon, Trash2, Save, Edit2, X } from 'lucide-react';
+import { Plus, Image as ImageIcon, Trash2, Edit2, X } from 'lucide-react';
 import './MenuManagement.css';
 
 interface MenuItem {
