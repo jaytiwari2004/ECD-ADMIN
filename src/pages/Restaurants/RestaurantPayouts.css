@@ -36,14 +36,17 @@
   padding: 1.25rem 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 1rem;
 }
 
 .payouts-table th {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  font-weight: 600;
+  background: transparent;
+  color: #ffffff;
+  font-weight: 800;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   letter-spacing: 0.5px;
   border-bottom: 2px solid var(--border-color);
 }
