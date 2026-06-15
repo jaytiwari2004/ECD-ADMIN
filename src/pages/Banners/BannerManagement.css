@@ -1,0 +1,104 @@
+.banners-container {
+  padding: 24px;
+}
+
+.banners-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.banners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.banner-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 12px;
+}
+
+.banner-image-container {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #1f2937;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-status-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.banner-status-badge.active {
+  background-color: #10b981; /* emerald-500 */
+}
+
+.banner-status-badge.inactive {
+  background-color: #ef4444; /* red-500 */
+}
+
+.banner-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-activate {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.btn-activate:hover {
+  background-color: rgba(16, 185, 129, 0.2);
+}
+
+.btn-deactivate {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b; /* amber-500 */
+}
+
+.btn-deactivate:hover {
+  background-color: rgba(245, 158, 11, 0.2);
+}
+
+.btn-delete {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.btn-delete:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+}
