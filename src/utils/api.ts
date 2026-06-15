@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'https://ecd-bk-dep.onrender.com/api/v1'; // Assuming v1 based on typical setup or just /api. I will check standard path later. Let's use standard relative or configure it. Wait, the routes in `app.ts` usually mount at `/api/v1`. Let me check `restaurant.controller.ts` where it says `RESTUARANT: POST /api/v1/restaurants/login`. So it's `/api/v1`.
+export const API_BASE_URL = 'http://localhost:5000/api/v1'; // Local backend
 
 export const getAuthToken = () => {
     return localStorage.getItem('token') || '';

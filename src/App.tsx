@@ -20,6 +20,8 @@ import RiderSystemManage from './pages/Riders/RiderSystemManage';
 import BlockedAccounts from './pages/Admin/BlockedAccounts';
 import Settings from './pages/Settings/Settings';
 import UsersList from './pages/Users/UsersList';
+import BannerManagement from './pages/Banners/BannerManagement';
+import PushNotificationPage from './pages/Admin/PushNotificationPage';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
@@ -60,6 +62,8 @@ function App() {
                     <Route path="/system/blocked-accounts" element={<BlockedAccounts />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/users" element={<UsersList />} />
+                    <Route path="/banners" element={<BannerManagement />} />
+                    <Route path="/push-notifications" element={<PushNotificationPage />} />
                   </Routes>
                 </div>
               </div>

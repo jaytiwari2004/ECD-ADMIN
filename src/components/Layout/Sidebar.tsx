@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Store, PlusCircle, Menu, ShieldAlert, Settings, Users, Star, Sliders } from 'lucide-react';
+import { LayoutDashboard, Store, PlusCircle, Menu, ShieldAlert, Settings, Users, Star, Sliders, Image as ImageIcon, BellRing } from 'lucide-react';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -26,6 +26,20 @@ const Sidebar = () => {
           <span style={{display: "flex", alignItems: "center", gap: "10px"}}>
             <Users size={20} />
             User Management System
+          </span>
+        </NavLink>
+
+        <NavLink to="/banners" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+          <span style={{display: "flex", alignItems: "center", gap: "10px"}}>
+            <ImageIcon size={20} />
+            Banner Management
+          </span>
+        </NavLink>
+
+        <NavLink to="/push-notifications" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+          <span style={{display: "flex", alignItems: "center", gap: "10px", color: "#8b5cf6"}}>
+            <BellRing size={20} />
+            Push Notifications
           </span>
         </NavLink>
 
