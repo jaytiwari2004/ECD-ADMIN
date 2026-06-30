@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams } from 'react-router-dom';
 import { apiFetch, uploadFile } from '../../utils/api';
 import { Plus, Image as ImageIcon, Trash2, Edit2, X } from 'lucide-react';
@@ -233,7 +234,7 @@ const MenuManagement = () => {
         )}
       </div>
 
-      {showModal && (
+      {showModal && createPortal(
         <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'block', zIndex: 99999, backdropFilter: 'blur(4px)', padding: '100px 1rem 50px', overflowY: 'auto' }}>
           <div className="glass-panel" style={{ width: '100%', maxWidth: '500px', padding: '2rem', position: 'relative', margin: '0 auto' }}>
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
@@ -302,7 +303,8 @@ const MenuManagement = () => {
               </button>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

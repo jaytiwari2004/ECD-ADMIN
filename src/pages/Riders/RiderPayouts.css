@@ -13,7 +13,7 @@
 .payouts-header h1 {
   font-size: 24px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -25,22 +25,22 @@
 .filter-controls button {
   padding: 8px 16px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: white;
-  color: #64748b;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .filter-controls button:hover {
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .filter-controls button.active {
-  background: #2563eb;
+  background: var(--primary-color);
   color: white;
-  border-color: #2563eb;
+  border-color: var(--primary-color);
 }
 
 .payouts-table-container {
@@ -58,24 +58,27 @@
 .payouts-table td {
   padding: 16px;
   text-align: left;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .payouts-table th {
-  font-weight: 600;
-  color: #64748b;
-  font-size: 14px;
-  background: rgba(248, 250, 252, 0.5);
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border-color);
 }
 
 .payouts-table td {
-  color: #334155;
+  color: var(--text-primary);
   font-size: 15px;
 }
 
 .payouts-table .amount {
   font-weight: 700;
-  color: #0f172a;
+  color: #10b981;
 }
 
 .status-badge {
@@ -117,7 +120,7 @@
 }
 
 .text-muted {
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-style: italic;
   font-size: 13px;
 }
@@ -138,31 +141,33 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   padding: 30px;
   border-radius: 16px;
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content h2 {
   margin-top: 0;
   margin-bottom: 24px;
-  color: #0f172a;
+  color: var(--text-primary);
   font-size: 22px;
 }
 
 .rider-details {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 24px;
+  border: 1px solid var(--border-color);
 }
 
 .rider-details p {
   margin: 0 0 12px 0;
-  color: #334155;
+  color: var(--text-primary);
   font-size: 15px;
 }
 
@@ -187,12 +192,12 @@
 .amount-highlight {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px dashed #cbd5e1;
+  border-top: 1px dashed var(--border-color);
 }
 
 .amount-highlight p {
   font-size: 20px;
-  color: #0f172a;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -209,14 +214,16 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .admin-actions input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   border-radius: 8px;
   font-size: 15px;
   outline: none;
@@ -224,7 +231,7 @@
 }
 
 .admin-actions input:focus {
-  border-color: #2563eb;
+  border-color: var(--primary-color);
 }
 
 .modal-buttons {
@@ -241,7 +248,7 @@
   cursor: pointer;
   border: 2px solid transparent;
   transition: all 0.2s ease;
-  background: white;
+  background: var(--bg-secondary);
 }
 
 .btn-decline {
@@ -269,26 +276,26 @@
   justify-content: flex-end;
   gap: 12px;
   padding-top: 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-color);
 }
 
 .btn-cancel {
   padding: 10px 20px;
-  background: #f1f5f9;
-  color: #64748b;
-  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .btn-cancel:hover {
-  background: #e2e8f0;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .btn-submit {
   padding: 10px 24px;
-  background: #0f172a;
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 8px;
@@ -302,7 +309,7 @@
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: #1e293b;
+  filter: brightness(1.1);
 }
 
 @keyframes fadeIn {

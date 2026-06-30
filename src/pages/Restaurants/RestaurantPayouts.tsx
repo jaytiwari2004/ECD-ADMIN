@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { apiFetch } from '../../utils/api';
 import './RestaurantPayouts.css';
 
@@ -100,7 +101,7 @@ const RestaurantPayouts = () => {
         ) : restaurants.length === 0 ? (
           <div className="empty-state">No restaurants found.</div>
         ) : (
-          <table className="payouts-table">
+          <table className="rest-payouts-table">
             <thead>
               <tr>
                 <th>Restaurant Name</th>
@@ -141,7 +142,7 @@ const RestaurantPayouts = () => {
       </div>
 
       {/* Manual Payment Modal */}
-      {isModalOpen && selectedRestaurant && (
+      {isModalOpen && selectedRestaurant && createPortal(
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content glass-panel" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -191,7 +192,8 @@ const RestaurantPayouts = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

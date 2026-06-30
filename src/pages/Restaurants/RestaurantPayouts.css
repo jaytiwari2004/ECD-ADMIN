@@ -26,13 +26,13 @@
   border: 1px solid var(--border-color);
 }
 
-.payouts-table {
+.rest-payouts-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.payouts-table th,
-.payouts-table td {
+.rest-payouts-table th,
+.rest-payouts-table td {
   padding: 1.25rem 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
@@ -41,9 +41,9 @@
   font-size: 1rem;
 }
 
-.payouts-table th {
+.rest-payouts-table th {
   background: transparent;
-  color: #ffffff;
+  color: var(--text-secondary);
   font-weight: 800;
   text-transform: uppercase;
   font-size: 0.95rem;
@@ -51,7 +51,7 @@
   border-bottom: 2px solid var(--border-color);
 }
 
-.payouts-table td.amount {
+.rest-payouts-table td.amount {
   font-weight: 600;
   color: #10b981;
 }

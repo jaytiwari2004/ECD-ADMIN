@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { apiFetch } from '../../utils/api';
 import './RiderPayouts.css';
 
@@ -137,8 +138,8 @@ const RiderPayouts = () => {
         )}
       </div>
 
-      {/* Manual Payment Modal */}
-      {isModalOpen && selectedRequest && (
+      {/* Payout Processing Modal */}
+      {isModalOpen && selectedRequest && createPortal(
         <div className="modal-overlay">
           <div className="modal-content glass-panel">
             <h2>Process Manual Payment</h2>
@@ -193,7 +194,8 @@ const RiderPayouts = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

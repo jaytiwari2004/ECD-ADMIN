@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Shield, CreditCard, FileText, LogOut, ChevronRight } from 'lucide-react';
 import './Settings.css';
 
@@ -101,7 +102,7 @@ const Settings = () => {
         </div>
       </div>
 
-      {activeDoc && (
+      {activeDoc && createPortal(
         <div className="doc-modal-overlay" onClick={() => setActiveDoc(null)}>
           <div className="doc-modal-content" onClick={e => e.stopPropagation()}>
             <div className="doc-modal-header">
@@ -116,7 +117,8 @@ const Settings = () => {
               {renderDocument()}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

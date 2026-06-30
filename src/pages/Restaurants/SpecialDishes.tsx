@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Plus, Trash2, Image as ImageIcon } from 'lucide-react';
 import { apiFetch } from '../../utils/api';
 import './SpecialDishes.css';
@@ -162,16 +163,16 @@ const SpecialDishes = () => {
       )}
 
       {/* Add Modal */}
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
+      {isModalOpen && createPortal(
+        <div className="sd-modal-overlay" onClick={closeModal}>
+          <div className="sd-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="sd-modal-header">
               <h2>Add Special Dish</h2>
               <button className="close-btn" onClick={closeModal}>&times;</button>
             </div>
             
             <form onSubmit={handleAddSubmit}>
-              <div className="modal-body">
+              <div className="sd-modal-body">
                 <div className="form-group">
                   <label>Dish Name *</label>
                   <input 
@@ -230,7 +231,7 @@ const SpecialDishes = () => {
                 </div>
               </div>
 
-              <div className="modal-footer">
+              <div className="sd-modal-footer">
                 <button type="button" className="btn-cancel" onClick={closeModal}>Cancel</button>
                 <button type="submit" className="btn-submit" disabled={isSubmitting || !selectedFile || !name}>
                   {isSubmitting ? 'Uploading...' : 'Add Dish'}
@@ -238,7 +239,8 @@ const SpecialDishes = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

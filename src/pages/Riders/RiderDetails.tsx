@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { apiFetch, uploadFile } from '../../utils/api';
 import './RiderDetails.css';
 
@@ -201,7 +202,7 @@ const RiderDetails = () => {
       </div>
 
       {/* Details Modal */}
-      {isModalOpen && selectedRider && (
+      {isModalOpen && selectedRider && createPortal(
         <div className="modal-overlay">
           <div className="modal-content glass-panel large-modal">
             <div className="modal-header">
@@ -367,15 +368,17 @@ const RiderDetails = () => {
 
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Fullscreen Image Viewer */}
-      {fullscreenImage && (
+      {/* Fullscreen Image Overlay */}
+      {fullscreenImage && createPortal(
         <div className="fullscreen-overlay" onClick={() => setFullscreenImage(null)}>
-          <button className="close-fullscreen">×</button>
+          <button className="close-fullscreen" onClick={() => setFullscreenImage(null)}>×</button>
           <img src={fullscreenImage} alt="Fullscreen Document" onClick={e => e.stopPropagation()} />
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

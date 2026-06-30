@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { apiFetch } from '../../utils/api';
 import './RiderOrders.css';
 
@@ -124,7 +125,7 @@ const RiderOrders = () => {
       </div>
 
       {/* History Modal */}
-      {selectedRider && (
+      {selectedRider && createPortal(
         <div className="modal-overlay" onClick={closeHistory}>
           <div className="modal-content glass-panel large-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -181,7 +182,8 @@ const RiderOrders = () => {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
