@@ -126,9 +126,9 @@ const AdminLogin = () => {
               <ChevronRight size={18} />
             </button>
             
-            <p className="toggle-text">
+            {/* <p className="toggle-text">
               First time here? <span onClick={() => { setMode('signup'); setError(''); }}>Set up account</span>
-            </p>
+            </p> */}
           </form>
         )}
 
