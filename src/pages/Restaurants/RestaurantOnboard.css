@@ -187,3 +187,6 @@
   color: var(--success);
   margin-bottom: 1rem;
 }
+
+.input-with-icon.phone-field input { padding-left: 4.75rem !important; }
+

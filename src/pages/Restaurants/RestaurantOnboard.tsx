@@ -89,7 +89,7 @@ const RestaurantOnboard = () => {
         method: 'POST',
         body: JSON.stringify({
           name,
-          phone,
+          phone: `+91${phone}`,
           address: location,
           lat: mapLat,
           lng: mapLng,
@@ -194,9 +194,18 @@ const RestaurantOnboard = () => {
 
               <div className="form-group">
                 <label>Phone Number</label>
-                <div className="input-with-icon">
+                <div className="input-with-icon phone-field">
                   <Phone size={18} className="input-icon" />
-                  <input type="tel" placeholder="+1 (555) 000-0000" value={phone} onChange={e => setPhone(e.target.value)} required />
+                  <span style={{ position: 'absolute', left: '2.75rem', color: 'var(--text-secondary)', fontWeight: '500' }}>+91</span>
+                  <input 
+                    type="tel" 
+                    placeholder="0000000000" 
+                    value={phone} 
+                    onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} 
+                    required 
+                    minLength={10}
+                    maxLength={10}
+                  />
                 </div>
               </div>
 
