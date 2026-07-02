@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
-import { UserCircle, LogOut } from 'lucide-react';
+import { UserCircle, LogOut, Menu } from 'lucide-react';
 import './Topbar.css';
 
-const Topbar = () => {
+interface TopbarProps {
+  onToggleSidebar?: () => void;
+  isSidebarCollapsed?: boolean;
+}
+
+const Topbar = ({ onToggleSidebar, isSidebarCollapsed }: TopbarProps) => {
   const [adminName, setAdminName] = useState('Admin');
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -26,8 +31,11 @@ const Topbar = () => {
 
   return (
     <header className="topbar glass-panel" style={{ position: 'relative', zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div className="topbar-logo" style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '2px', color: 'var(--text-primary)' }}>
-        ECD KART
+      <div className="topbar-logo" style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '2px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <button onClick={onToggleSidebar} style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'var(--text-primary)', cursor: 'pointer', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Toggle Sidebar">
+          <Menu size={20} />
+        </button>
+        <span>ECD KART</span>
       </div>
 
       <div className="topbar-actions">

@@ -33,7 +33,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+import { useState } from 'react';
+
 function App() {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   return (
     <Router>
       <Routes>
@@ -42,9 +46,9 @@ function App() {
         <Route path="/*" element={
           <ProtectedRoute>
             <div className="app-container">
-              <Sidebar />
+              <Sidebar isCollapsed={isSidebarCollapsed} />
               <div className="main-content">
-                <Topbar />
+                <Topbar onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)} isSidebarCollapsed={isSidebarCollapsed} />
                 <div className="page-content animate-fade-in">
                   <Routes>
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />

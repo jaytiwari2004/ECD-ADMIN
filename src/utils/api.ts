@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'https://ecd-bk-dep.onrender.com/api/v1'; // Remote backend
+export const API_BASE_URL = 'https://ecd-bk-dep.onrender.com/api/v1'; // Local backend
 
 export const getAuthToken = () => {
     return localStorage.getItem('token') || '';

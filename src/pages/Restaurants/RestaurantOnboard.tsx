@@ -1,37 +1,44 @@
-import { useState } from 'react';
+import React, { useState, useEffect, useRef, Component, ErrorInfo, ReactNode } from 'react';
 import { Upload, FileText, Store, Phone, CheckCircle2, Hash, KeyRound, Plus, Image as ImageIcon, Trash2, Tag, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { useLoadScript } from '@react-google-maps/api';
 import './RestaurantOnboard.css';
 
 import { apiFetch, uploadFile } from '../../utils/api';
 
-function LocationMarker({ position, setPosition }: { position: any, setPosition: (latlng: any) => void }) {
-  useMapEvents({
-    click(e) {
-      setPosition(e.latlng);
-    },
-  });
-  return position === null ? null : <Marker position={position}></Marker>;
-}
+const libraries: ("places")[] = ["places"];
+
+
 
 const RestaurantOnboard = () => {
   const navigate = useNavigate();
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyCN7XqyxOj5lgr2uaMNrTOg6PzHTOGa0xU",
+    libraries,
+  });
+  const [mapError, setMapError] = useState('');
+  const [autocompleteError, setAutocompleteError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successData, setSuccessData] = useState<{ id: string, key: string, name: string } | null>(null);
-  
+
+  const mapRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [map, setMap] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const markerRef = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [upi, setUpi] = useState('');
   const [location, setLocation] = useState('');
   const [mapLat, setMapLat] = useState('');
   const [mapLng, setMapLng] = useState('');
-  const [mapPosition, setMapPosition] = useState<any>(null);
-  
+  const [mapPosition, setMapPosition] = useState<{ lat: number, lng: number } | null>(null);
+
   const [restaurantId, setRestaurantId] = useState('');
   const [restaurantKey, setRestaurantKey] = useState('');
-  
+
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
 
@@ -47,12 +54,83 @@ const RestaurantOnboard = () => {
   };
 
   // Sync map position with lat/lng strings only when user clicks map
-  const handleMapClick = (latlng: any) => {
+  const handleMapClick = (latlng: { lat: number, lng: number }) => {
     setMapPosition(latlng);
     setMapLat(latlng.lat.toFixed(6));
     setMapLng(latlng.lng.toFixed(6));
     if (!location) setLocation('Selected from map');
   };
+
+  useEffect(() => {
+    if (isLoaded && mapRef.current && !map) {
+      try {
+        if (!window.google) throw new Error("window.google is undefined");
+        if (!window.google.maps) throw new Error("window.google.maps is undefined");
+
+        // @ts-expect-error - window.google is not typed
+        const newMap = new window.google.maps.Map(mapRef.current, {
+          center: mapPosition || { lat: 28.5355, lng: 77.3910 },
+          zoom: 12,
+        });
+        setMap(newMap);
+
+        // @ts-expect-error - window.google is not typed
+        newMap.addListener('click', (e: any) => {
+          if (e.latLng) {
+            handleMapClick({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+          }
+        });
+      } catch (err: any) {
+        setMapError(err.message || String(err));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, mapRef, map]);
+
+  useEffect(() => {
+    if (map && mapPosition) {
+      if (!markerRef.current) {
+        // @ts-expect-error - window.google is not typed
+        markerRef.current = new window.google.maps.Marker({
+          position: mapPosition,
+          map: map,
+        });
+      } else {
+        markerRef.current.setPosition(mapPosition);
+      }
+      map.panTo(mapPosition);
+    }
+  }, [map, mapPosition]);
+
+  useEffect(() => {
+    if (isLoaded && inputRef.current) {
+      try {
+        if (!window.google?.maps?.places) throw new Error("Places API not loaded (libraries array might be missing or failed)");
+
+        // @ts-expect-error - window.google is not typed
+        const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
+          componentRestrictions: { country: "in" },
+        });
+
+        // @ts-expect-error - window.google is not typed
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          if (place.formatted_address) {
+            setLocation(place.formatted_address);
+          }
+          if (place.geometry?.location) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+            handleMapClick({ lat, lng });
+          }
+        });
+      } catch (err: any) {
+        setAutocompleteError(err.message || String(err));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, inputRef]);
+
   const [menuItems, setMenuItems] = useState([
     { id: 'item-1', name: '', b2bPrice: '', sellingPrice: '', image: null, isVeg: true, description: '' }
   ]);
@@ -106,7 +184,7 @@ const RestaurantOnboard = () => {
       // 3. Add Menu Items
       for (const item of menuItems) {
         if (!item.name || !item.sellingPrice) continue;
-        
+
         let itemImageUrl = '';
         if (item.image) itemImageUrl = await uploadFile(item.image as unknown as File);
 
@@ -128,8 +206,8 @@ const RestaurantOnboard = () => {
         key: createRes.restaurant.restaurantKey,
         name: createRes.restaurant.name
       });
-    } catch (error: any) {
-      alert(error.message || 'Failed to onboard restaurant');
+    } catch (error: unknown) {
+      alert((error as Error).message || 'Failed to onboard restaurant');
     } finally {
       setIsSubmitting(false);
     }
@@ -197,12 +275,12 @@ const RestaurantOnboard = () => {
                 <div className="input-with-icon phone-field">
                   <Phone size={18} className="input-icon" />
                   <span style={{ position: 'absolute', left: '2.75rem', color: 'var(--text-secondary)', fontWeight: '500' }}>+91</span>
-                  <input 
-                    type="tel" 
-                    placeholder="0000000000" 
-                    value={phone} 
-                    onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} 
-                    required 
+                  <input
+                    type="tel"
+                    placeholder="0000000000"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    required
                     minLength={10}
                     maxLength={10}
                   />
@@ -217,48 +295,43 @@ const RestaurantOnboard = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="form-grid" style={{ marginTop: '1.5rem', gridTemplateColumns: '1fr' }}>
+
               <div className="form-group">
-                <label>Restaurant Location (Map)</label>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '0 0 0.5rem 0' }}>Click on the map to accurately drop a pin for the restaurant's location.</p>
-                <div style={{ height: '350px', width: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--glass-border)', zIndex: 0 }}>
-                  <MapContainer 
-                    center={[28.5355, 77.3910]} // Centered on Noida by default
-                    zoom={12} 
-                    style={{ height: '100%', width: '100%', zIndex: 1 }}
-                  >
-                    <TileLayer
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    />
-                    <LocationMarker position={mapPosition} setPosition={handleMapClick} />
-                  </MapContainer>
-                </div>
-              </div>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                <div className="form-group">
-                  <label>Latitude</label>
-                  <input type="text" value={mapLat} onChange={(e) => setMapLat(e.target.value)} placeholder="e.g. 28.535517" style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none' }} />
-                </div>
-                <div className="form-group">
-                  <label>Longitude</label>
-                  <input type="text" value={mapLng} onChange={(e) => setMapLng(e.target.value)} placeholder="e.g. 77.391029" style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none' }} />
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label>Formatted Address</label>
+                <label>Search Restaurant Location</label>
                 <div className="input-with-icon">
                   <MapPin size={18} className="input-icon" />
-                  <input 
-                    type="text" 
-                    placeholder="Search or auto-fill address..." 
+                  <input
+                    ref={inputRef}
+                    type="text"
                     value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    required 
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLocation(e.target.value)}
+                    placeholder={isLoaded ? "Search for a restaurant or address..." : "Loading search..."}
+                    disabled={!isLoaded}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 1rem 0.75rem 2.75rem',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid var(--glass-border)',
+                      borderRadius: 'var(--radius-md)',
+                      color: 'var(--text-primary)',
+                      outline: 'none'
+                    }}
                   />
+                  {autocompleteError && <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.5rem', paddingLeft: '0.5rem' }}>Search Error: {autocompleteError}</div>}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '0 0 0.5rem 0' }}>Or click on the map to accurately drop a pin.</p>
+                <div
+                  ref={mapRef}
+                  style={{ height: '350px', width: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--glass-border)', zIndex: 0, background: 'rgba(255,255,255,0.02)' }}
+                >
+                  {loadError && <div style={{ padding: '2rem', textAlign: 'center', color: '#ef4444' }}>Error Loading API: {loadError.message}</div>}
+                  {mapError && <div style={{ padding: '2rem', textAlign: 'center', color: '#ef4444' }}>Map Initialization Error: {mapError}</div>}
+                  {!isLoaded && !loadError && <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Map...</div>}
                 </div>
               </div>
             </div>
@@ -342,7 +415,7 @@ const RestaurantOnboard = () => {
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1.5rem', marginTop: '-1rem' }}>
               Add items to the restaurant's menu. Provide both B2B and Selling prices.
             </p>
-            
+
             <div className="onboard-menu-items" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {menuItems.map((item) => (
                 <div key={item.id} className="glass-panel" style={{ padding: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', position: 'relative' }}>
@@ -357,13 +430,13 @@ const RestaurantOnboard = () => {
                     )}
                     <input type="file" accept="image/*" style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} onChange={(e) => updateMenuItem(item.id, 'image', (e.target.files?.[0] as unknown as string) || null)} />
                   </div>
-                  
+
                   <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                     <div className="form-group" style={{ gridColumn: 'span 2' }}>
                       <label>Item Name</label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. Garlic Bread" 
+                      <input
+                        type="text"
+                        placeholder="e.g. Garlic Bread"
                         value={item.name}
                         onChange={(e) => updateMenuItem(item.id, 'name', e.target.value)}
                         required
@@ -373,7 +446,7 @@ const RestaurantOnboard = () => {
 
                     <div className="form-group">
                       <label>Type</label>
-                      <select 
+                      <select
                         value={item.isVeg ? 'veg' : 'non-veg'}
                         onChange={(e) => updateMenuItem(item.id, 'isVeg', e.target.value === 'veg')}
                         style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none', appearance: 'auto' }}
@@ -385,22 +458,22 @@ const RestaurantOnboard = () => {
 
                     <div className="form-group" style={{ gridColumn: 'span 3' }}>
                       <label>Description</label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. Delicious garlic bread with melted cheese" 
+                      <input
+                        type="text"
+                        placeholder="e.g. Delicious garlic bread with melted cheese"
                         value={item.description}
                         onChange={(e) => updateMenuItem(item.id, 'description', e.target.value)}
                         style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none' }}
                       />
                     </div>
-                    
+
                     <div className="form-group">
                       <label>B2B Price (Cost)</label>
                       <div className="input-with-icon">
                         <Tag size={16} className="input-icon" />
-                        <input 
-                          type="number" 
-                          placeholder="0.00" 
+                        <input
+                          type="number"
+                          placeholder="0.00"
                           value={item.b2bPrice}
                           onChange={(e) => updateMenuItem(item.id, 'b2bPrice', e.target.value)}
                           required
@@ -412,9 +485,9 @@ const RestaurantOnboard = () => {
                       <label>Selling Price (Retail)</label>
                       <div className="input-with-icon">
                         <Tag size={16} className="input-icon" />
-                        <input 
-                          type="number" 
-                          placeholder="0.00" 
+                        <input
+                          type="number"
+                          placeholder="0.00"
                           value={item.sellingPrice}
                           onChange={(e) => updateMenuItem(item.id, 'sellingPrice', e.target.value)}
                           required
@@ -424,7 +497,7 @@ const RestaurantOnboard = () => {
                   </div>
 
                   {menuItems.length > 1 && (
-                    <button 
+                    <button
                       type="button"
                       onClick={() => removeMenuItem(item.id)}
                       style={{ position: 'absolute', top: '1rem', right: '1rem', color: 'var(--danger)', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '50%' }}
@@ -434,9 +507,9 @@ const RestaurantOnboard = () => {
                   )}
                 </div>
               ))}
-              
-              <button 
-                type="button" 
+
+              <button
+                type="button"
                 onClick={addMenuItem}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem', border: '2px dashed var(--glass-border)', borderRadius: 'var(--radius-md)', color: 'var(--accent-primary)', background: 'transparent', cursor: 'pointer', transition: 'all 0.3s' }}
               >
@@ -460,4 +533,39 @@ const RestaurantOnboard = () => {
   );
 };
 
-export default RestaurantOnboard;
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean, error: Error | null }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("ErrorBoundary caught:", error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '2rem', color: '#ff5555', background: '#1a1a1a', minHeight: '100vh', borderRadius: '8px' }}>
+          <h2 style={{ marginBottom: '1rem' }}>Something went wrong in RestaurantOnboard.</h2>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginTop: '1rem', background: 'rgba(255,0,0,0.1)', padding: '1rem' }}>
+            {this.state.error?.toString()}
+          </pre>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginTop: '1rem', fontSize: '0.8rem', color: '#aaaaaa' }}>
+            {this.state.error?.stack}
+          </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export default function RestaurantOnboardWithErrorBoundary() {
+  return (
+    <ErrorBoundary>
+      <RestaurantOnboard />
+    </ErrorBoundary>
+  );
+}
