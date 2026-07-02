@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, Component, ErrorInfo, ReactNode } from 'react';
+import React, { useState, useEffect, useRef, Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import { Upload, FileText, Store, Phone, CheckCircle2, Hash, KeyRound, Plus, Image as ImageIcon, Trash2, Tag, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLoadScript } from '@react-google-maps/api';
@@ -67,14 +68,12 @@ const RestaurantOnboard = () => {
         if (!window.google) throw new Error("window.google is undefined");
         if (!window.google.maps) throw new Error("window.google.maps is undefined");
 
-        // @ts-expect-error - window.google is not typed
         const newMap = new window.google.maps.Map(mapRef.current, {
           center: mapPosition || { lat: 28.5355, lng: 77.3910 },
           zoom: 12,
         });
         setMap(newMap);
 
-        // @ts-expect-error - window.google is not typed
         newMap.addListener('click', (e: any) => {
           if (e.latLng) {
             handleMapClick({ lat: e.latLng.lat(), lng: e.latLng.lng() });
@@ -90,7 +89,6 @@ const RestaurantOnboard = () => {
   useEffect(() => {
     if (map && mapPosition) {
       if (!markerRef.current) {
-        // @ts-expect-error - window.google is not typed
         markerRef.current = new window.google.maps.Marker({
           position: mapPosition,
           map: map,
@@ -107,12 +105,10 @@ const RestaurantOnboard = () => {
       try {
         if (!window.google?.maps?.places) throw new Error("Places API not loaded (libraries array might be missing or failed)");
 
-        // @ts-expect-error - window.google is not typed
         const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
           componentRestrictions: { country: "in" },
         });
 
-        // @ts-expect-error - window.google is not typed
         autocomplete.addListener('place_changed', () => {
           const place = autocomplete.getPlace();
           if (place.formatted_address) {

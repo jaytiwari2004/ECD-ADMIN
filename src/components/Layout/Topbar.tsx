@@ -7,7 +7,7 @@ interface TopbarProps {
   isSidebarCollapsed?: boolean;
 }
 
-const Topbar = ({ onToggleSidebar, isSidebarCollapsed }: TopbarProps) => {
+const Topbar = ({ onToggleSidebar }: TopbarProps) => {
   const [adminName, setAdminName] = useState('Admin');
   const [showDropdown, setShowDropdown] = useState(false);
 
