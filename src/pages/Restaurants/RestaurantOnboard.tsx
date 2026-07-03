@@ -14,7 +14,7 @@ const libraries: ("places")[] = ["places"];
 const RestaurantOnboard = () => {
   const navigate = useNavigate();
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyCN7XqyxOj5lgr2uaMNrTOg6PzHTOGa0xU",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
     libraries,
   });
   const [mapError, setMapError] = useState('');
