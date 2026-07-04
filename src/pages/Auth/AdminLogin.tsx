@@ -7,19 +7,19 @@ import './AdminLogin.css';
 const AdminLogin = () => {
   const navigate = useNavigate();
   const [mode, setMode] = useState<'login' | 'signup' | 'verify'>('login');
-  
+
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [pin, setPin] = useState('');
   const [otp, setOtp] = useState('');
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone) return setError("Phone number is required");
-    
+
     setLoading(true);
     setError('');
     try {
@@ -39,7 +39,7 @@ const AdminLogin = () => {
     e.preventDefault();
     if (!otp || !pin) return setError("OTP and PIN are required");
     if (pin.length !== 4) return setError("PIN must be exactly 4 digits");
-    
+
     setLoading(true);
     setError('');
     try {
@@ -47,7 +47,7 @@ const AdminLogin = () => {
         method: 'POST',
         body: JSON.stringify({ phone, code: otp, role: 'admin', pin, name })
       });
-      
+
       localStorage.setItem('token', res.token);
       localStorage.setItem('adminUser', JSON.stringify(res.user));
       navigate('/dashboard', { replace: true });
@@ -61,7 +61,7 @@ const AdminLogin = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone || !pin) return setError("Phone and PIN are required");
-    
+
     setLoading(true);
     setError('');
     try {
@@ -69,7 +69,7 @@ const AdminLogin = () => {
         method: 'POST',
         body: JSON.stringify({ phone, pin })
       });
-      
+
       localStorage.setItem('token', res.token);
       localStorage.setItem('adminUser', JSON.stringify(res.user));
       navigate('/dashboard', { replace: true });
@@ -99,9 +99,9 @@ const AdminLogin = () => {
               <label>Phone Number</label>
               <div className="input-with-icon">
                 <Phone size={18} className="input-icon" />
-                <input 
-                  type="tel" 
-                  placeholder="Enter 10-digit number" 
+                <input
+                  type="tel"
+                  placeholder="Enter 10-digit number"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
@@ -111,21 +111,21 @@ const AdminLogin = () => {
               <label>Secret PIN</label>
               <div className="input-with-icon">
                 <Lock size={18} className="input-icon" />
-                <input 
-                  type="password" 
-                  placeholder="Enter 4-digit PIN" 
+                <input
+                  type="password"
+                  placeholder="Enter 4-digit PIN"
                   maxLength={4}
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
                 />
               </div>
             </div>
-            
+
             <button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? 'Authenticating...' : 'Secure Login'}
               <ChevronRight size={18} />
             </button>
-            
+
             {/* <p className="toggle-text">
               First time here? <span onClick={() => { setMode('signup'); setError(''); }}>Set up account</span>
             </p> */}
@@ -138,9 +138,9 @@ const AdminLogin = () => {
               <label>Admin Name (Optional)</label>
               <div className="input-with-icon">
                 <User size={18} className="input-icon" />
-                <input 
-                  type="text" 
-                  placeholder="e.g. John Doe" 
+                <input
+                  type="text"
+                  placeholder="e.g. John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -150,19 +150,19 @@ const AdminLogin = () => {
               <label>Phone Number</label>
               <div className="input-with-icon">
                 <Phone size={18} className="input-icon" />
-                <input 
-                  type="tel" 
-                  placeholder="Enter 10-digit number" 
+                <input
+                  type="tel"
+                  placeholder="Enter 10-digit number"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
             </div>
-            
+
             <button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? 'Sending OTP...' : 'Send OTP'}
             </button>
-            
+
             <p className="toggle-text">
               Already set up? <span onClick={() => { setMode('login'); setError(''); }}>Back to Login</span>
             </p>
@@ -175,9 +175,9 @@ const AdminLogin = () => {
               <label>Enter OTP</label>
               <div className="input-with-icon">
                 <CheckCircle2 size={18} className="input-icon" />
-                <input 
-                  type="text" 
-                  placeholder="6-digit code" 
+                <input
+                  type="text"
+                  placeholder="6-digit code"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                 />
@@ -187,20 +187,20 @@ const AdminLogin = () => {
               <label>Create Secret PIN</label>
               <div className="input-with-icon">
                 <Lock size={18} className="input-icon" />
-                <input 
-                  type="password" 
-                  placeholder="4-digit PIN for future logins" 
+                <input
+                  type="password"
+                  placeholder="4-digit PIN for future logins"
                   maxLength={4}
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
                 />
               </div>
             </div>
-            
+
             <button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? 'Verifying...' : 'Verify & Complete Setup'}
             </button>
-            
+
             <p className="toggle-text">
               Didn't receive code? <span onClick={handleSendOtp}>Resend OTP</span>
             </p>
