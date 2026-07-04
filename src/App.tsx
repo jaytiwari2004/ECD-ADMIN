@@ -14,6 +14,7 @@ import RestaurantPayouts from './pages/Restaurants/RestaurantPayouts';
 import SpecialDishes from './pages/Restaurants/SpecialDishes';
 import AdminLogin from './pages/Auth/AdminLogin';
 import RiderPayouts from './pages/Riders/RiderPayouts';
+import RiderStatus from './pages/Riders/RiderStatus';
 import RiderDetails from './pages/Riders/RiderDetails';
 import RiderOrders from './pages/Riders/RiderOrders';
 import RiderSystemManage from './pages/Riders/RiderSystemManage';
@@ -61,6 +62,7 @@ function App() {
                     <Route path="/restaurants/payouts" element={<RestaurantPayouts />} />
                     <Route path="/restaurants/special-dishes" element={<SpecialDishes />} />
                     <Route path="/riders/details" element={<RiderDetails />} />
+                    <Route path="/riders/status" element={<RiderStatus />} />
                     <Route path="/riders/payouts" element={<RiderPayouts />} />
                     <Route path="/riders/orders" element={<RiderOrders />} />
                     <Route path="/riders/system-manage" element={<RiderSystemManage />} />

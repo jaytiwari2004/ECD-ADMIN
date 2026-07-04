@@ -38,20 +38,14 @@ const RestaurantOnboard = () => {
   const [mapPosition, setMapPosition] = useState<{ lat: number, lng: number } | null>(null);
 
   const [restaurantId, setRestaurantId] = useState('');
-  const [restaurantKey, setRestaurantKey] = useState('');
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
 
   const generateCredentials = () => {
     let id = '';
-    let key = '';
-    for (let i = 0; i < 14; i++) {
-      id += Math.floor(Math.random() * 10).toString();
-      key += Math.floor(Math.random() * 10).toString();
-    }
+    for (let i = 0; i < 14; i++) id += Math.floor(Math.random() * 10).toString();
     setRestaurantId(id);
-    setRestaurantKey(key);
   };
 
   // Sync map position with lat/lng strings only when user clicks map
@@ -111,13 +105,14 @@ const RestaurantOnboard = () => {
 
         autocomplete.addListener('place_changed', () => {
           const place = autocomplete.getPlace();
-          if (place.formatted_address) {
-            setLocation(place.formatted_address);
-          }
           if (place.geometry?.location) {
             const lat = place.geometry.location.lat();
             const lng = place.geometry.location.lng();
+            const formattedAddress = place.formatted_address || place.name;
             handleMapClick({ lat, lng });
+            if (formattedAddress) {
+              setLocation(formattedAddress);
+            }
           }
         });
       } catch (err: any) {
@@ -152,13 +147,11 @@ const RestaurantOnboard = () => {
 
     setIsSubmitting(true);
     try {
-      // 1. Upload Images
       let logoUrl = '';
       let licenseUrl = '';
       if (logoFile) logoUrl = await uploadFile(logoFile);
       if (licenseFile) licenseUrl = await uploadFile(licenseFile);
 
-      // 2. Create Restaurant
       const createRes = await apiFetch('/restaurants/admin/create', {
         method: 'POST',
         body: JSON.stringify({
@@ -168,19 +161,16 @@ const RestaurantOnboard = () => {
           lat: mapLat,
           lng: mapLng,
           logo: logoUrl,
-          accountDetail: licenseUrl, // Using accountDetail for license/documents per schema
+          accountDetail: licenseUrl,
           restaurantId: restaurantId || undefined,
-          restaurantKey: restaurantKey || undefined,
           upi: upi || undefined,
         })
       });
 
       const newRestaurantId = createRes.restaurant._id;
 
-      // 3. Add Menu Items
       for (const item of menuItems) {
         if (!item.name || !item.sellingPrice) continue;
-
         let itemImageUrl = '';
         if (item.image) itemImageUrl = await uploadFile(item.image as unknown as File);
 
@@ -199,7 +189,6 @@ const RestaurantOnboard = () => {
 
       setSuccessData({
         id: createRes.restaurant.restaurantId,
-        key: createRes.restaurant.restaurantKey,
         name: createRes.restaurant.name
       });
     } catch (error: unknown) {
@@ -216,22 +205,15 @@ const RestaurantOnboard = () => {
           <CheckCircle2 size={64} className="success-icon" style={{ margin: '0 auto 1.5rem', display: 'block' }} />
           <h2 style={{ textAlign: 'center', marginBottom: '0.5rem' }}>{successData.name} Onboarded!</h2>
           <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-            The restaurant has been successfully added to the system. Please share the following credentials securely with the restaurant owner.
+            The restaurant has been successfully added to the system.
           </p>
 
           <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', marginBottom: '2rem' }}>
             <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Restaurant ID (Login ID)</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Restaurant ID</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Hash size={18} color="var(--accent-primary)" />
                 <span style={{ fontSize: '1.25rem', fontWeight: 600, letterSpacing: '2px', color: 'var(--text-primary)' }}>{successData.id}</span>
-              </div>
-            </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Secret Key (Password)</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <KeyRound size={18} color="var(--danger)" />
-                <span style={{ fontSize: '1.25rem', fontWeight: 600, letterSpacing: '2px', color: 'var(--text-primary)' }}>{successData.key}</span>
               </div>
             </div>
           </div>
@@ -329,6 +311,25 @@ const RestaurantOnboard = () => {
                   {mapError && <div style={{ padding: '2rem', textAlign: 'center', color: '#ef4444' }}>Map Initialization Error: {mapError}</div>}
                   {!isLoaded && !loadError && <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Map...</div>}
                 </div>
+                
+                {/* Auto-populated address display */}
+                {location && location !== 'Selected from map' && (
+                  <div style={{
+                    marginTop: '1rem',
+                    padding: '0.75rem 1rem',
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    borderRadius: 'var(--radius-md)',
+                    color: '#10b981',
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}>
+                    <MapPin size={16} />
+                    <strong>Selected Address:</strong> {location}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -341,22 +342,14 @@ const RestaurantOnboard = () => {
               </button>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-              Enter a 14-digit Restaurant ID and Key manually, or auto-generate them. These are used by the restaurant to login.
+              Enter a 14-digit Restaurant ID manually, or auto-generate it. This is used by the restaurant to login.
             </p>
             <div className="form-grid">
-              <div className="form-group">
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                 <label>Restaurant ID (Login ID)</label>
                 <div className="input-with-icon">
                   <Hash size={18} className="input-icon" />
                   <input type="text" placeholder="14-digit ID" value={restaurantId} onChange={e => setRestaurantId(e.target.value.replace(/\D/g, '').slice(0, 14))} minLength={14} maxLength={14} />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Restaurant Key (Password)</label>
-                <div className="input-with-icon">
-                  <KeyRound size={18} className="input-icon" />
-                  <input type="text" placeholder="14-digit Key" value={restaurantKey} onChange={e => setRestaurantKey(e.target.value.replace(/\D/g, '').slice(0, 14))} minLength={14} maxLength={14} />
                 </div>
               </div>
             </div>
