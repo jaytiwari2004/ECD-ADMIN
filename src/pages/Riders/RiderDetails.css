@@ -90,6 +90,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-view:hover {
@@ -163,8 +164,8 @@
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 24px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   border: 1px solid var(--border-color);
 }
@@ -172,10 +173,14 @@
 .info-section p {
   margin: 0;
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .ml-2 {
-  margin-left: 8px;
+  margin-left: 0; /* Changed from 8px since we are using gap */
 }
 
 .documents-section {
@@ -246,6 +251,8 @@
 
 .edit-doc-btn {
   margin-top: auto;
+  display: block;
+  text-align: center;
   padding: 8px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -255,6 +262,7 @@
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .edit-doc-btn:hover {

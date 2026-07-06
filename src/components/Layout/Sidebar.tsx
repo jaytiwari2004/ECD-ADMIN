@@ -27,7 +27,7 @@ const Sidebar = ({ isCollapsed = false }: SidebarProps) => {
           {!isCollapsed && <span>Dashboard</span>}
         </NavLink>
 
-        <NavLink to="/blocked-accounts" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"} title="Blocked Accounts" style={{ color: "#ef4444" }}>
+        <NavLink to="/system/blocked-accounts" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"} title="Blocked Accounts" style={{ color: "#ef4444" }}>
           <ShieldAlert size={20} />
           {!isCollapsed && <span>Blocked Accounts</span>}
         </NavLink>

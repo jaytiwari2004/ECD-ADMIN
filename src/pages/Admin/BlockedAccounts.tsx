@@ -121,6 +121,7 @@ const BlockedAccounts = () => {
                 <tr>
                   <th>Rider Details</th>
                   <th>Phone</th>
+                  <th>Status & Verification</th>
                   <th>Joined Date</th>
                   <th>Actions</th>
                 </tr>
@@ -133,6 +134,12 @@ const BlockedAccounts = () => {
                       <div className="id-cell">ID: {rider.riderId || 'N/A'}</div>
                     </td>
                     <td>{rider.phone}</td>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span className="badge status-suspended" style={{ width: 'fit-content' }}>SUSPENDED</span>
+                        <span className="badge unverified" style={{ width: 'fit-content' }}>UNVERIFIED</span>
+                      </div>
+                    </td>
                     <td style={{ color: 'var(--text-secondary)' }}>
                       {new Date(rider.createdAt).toLocaleDateString()}
                     </td>

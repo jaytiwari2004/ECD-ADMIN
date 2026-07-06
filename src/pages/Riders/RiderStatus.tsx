@@ -8,7 +8,7 @@ interface RiderStatusInfo {
   phone: string;
   riderId?: string;
   isOnline: boolean;
-  status: 'Online' | 'Offline' | 'Busy';
+  status: 'Online' | 'Offline' | 'Busy' | 'Suspended';
   completedOrders: number;
   totalEarnings: number;
   lastActive?: string;
@@ -54,7 +54,8 @@ const RiderStatus = () => {
     const statusOrder: Record<string, number> = {
       'Online': 1,
       'Busy': 2,
-      'Offline': 3
+      'Offline': 3,
+      'Suspended': 4
     };
 
     return [...riders].sort((a, b) => {
@@ -85,6 +86,10 @@ const RiderStatus = () => {
         <div className="status-card offline">
           <h3>{riders.filter(r => r.status === 'Offline').length}</h3>
           <p>Offline</p>
+        </div>
+        <div className="status-card" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+          <h3 style={{ margin: 0, fontSize: '2rem' }}>{riders.filter(r => r.status === 'Suspended').length}</h3>
+          <p style={{ margin: 0, fontSize: '0.875rem', opacity: 0.8 }}>Suspended</p>
         </div>
       </div>
 

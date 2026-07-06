@@ -189,6 +189,7 @@ const RestaurantOnboard = () => {
 
       setSuccessData({
         id: createRes.restaurant.restaurantId,
+        key: createRes.restaurant.restaurantKey || '',
         name: createRes.restaurant.name
       });
     } catch (error: unknown) {

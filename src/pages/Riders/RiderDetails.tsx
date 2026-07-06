@@ -23,6 +23,7 @@ const RiderDetails = () => {
   const [riders, setRiders] = useState<Rider[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [statusMap, setStatusMap] = useState<Record<string, string>>({});
 
   // Pagination (Simple)
   const [page, setPage] = useState(1);
@@ -43,9 +44,21 @@ const RiderDetails = () => {
   const fetchRiders = async (p: number) => {
     setLoading(true);
     try {
-      const data = await apiFetch(`/admin/users?role=driver&page=${p}&limit=20`);
+      const [data, summaryData] = await Promise.all([
+        apiFetch(`/admin/users?role=driver&page=${p}&limit=20`),
+        apiFetch('/admin/riders/orders/summary').catch(() => null)
+      ]);
       setRiders(data.users || []);
       setTotalPages(data.totalPages || 1);
+      
+      if (summaryData && summaryData.riders) {
+        const smap: Record<string, string> = {};
+        summaryData.riders.forEach((r: any) => {
+          smap[r._id] = r.status;
+        });
+        setStatusMap(smap);
+      }
+      
       setError('');
     } catch (err: any) {
       setError(err.message || 'Failed to fetch riders');
@@ -75,8 +88,15 @@ const RiderDetails = () => {
         body: JSON.stringify({ status: newStatus, isVerified }),
       });
       // Update local state
-      setSelectedRider({ ...selectedRider, status: newStatus, isVerified });
-      setRiders(riders.map(r => r._id === selectedRider._id ? data.user : r));
+      if (newStatus === 'suspended') {
+        setRiders(riders.filter(r => r._id !== selectedRider._id));
+        setSelectedRider(null);
+        setIsModalOpen(false);
+        alert('Rider successfully blocked and moved to the Blocked Accounts section.');
+      } else {
+        setSelectedRider({ ...selectedRider, status: newStatus, isVerified });
+        setRiders(riders.map(r => r._id === selectedRider._id ? data.user : r));
+      }
     } catch (err: any) {
       alert(err.message || 'Failed to update rider status');
     } finally {
@@ -174,11 +194,13 @@ const RiderDetails = () => {
                     <td>{rider.name || 'Unknown'}</td>
                     <td>{rider.phone}</td>
                     <td>
-                      <span className={`badge status-${rider.status}`}>{rider.status.toUpperCase()}</span>
+                      <span className={`badge ${statusMap[rider._id] === 'Suspended' || rider.status === 'suspended' ? 'status-suspended' : statusMap[rider._id] === 'Busy' ? 'status-busy' : rider.isOnline ? 'status-active' : 'unverified'}`}>
+                        {rider.status === 'suspended' ? 'SUSPENDED' : statusMap[rider._id] ? statusMap[rider._id].toUpperCase() : rider.isOnline ? 'ONLINE' : 'OFFLINE'}
+                      </span>
                     </td>
                     <td>
                       <span className={`badge ${rider.isVerified ? 'verified' : 'unverified'}`}>
-                        {rider.isVerified ? 'VERIFIED' : 'UNVERIFIED'}
+                        {rider.isVerified ? '✓ VERIFIED' : 'UNVERIFIED'}
                       </span>
                     </td>
                     <td>{new Date(rider.createdAt).toLocaleDateString()}</td>
@@ -216,12 +238,14 @@ const RiderDetails = () => {
                 <p><strong>Rider ID:</strong> {selectedRider.riderId || 'Not Assigned'}</p>
                 <p>
                   <strong>Account Status:</strong> 
-                  <span className={`badge status-${selectedRider.status} ml-2`}>{selectedRider.status.toUpperCase()}</span>
+                  <span className={`badge ${statusMap[selectedRider._id] === 'Suspended' || selectedRider.status === 'suspended' ? 'status-suspended' : statusMap[selectedRider._id] === 'Busy' ? 'status-busy' : selectedRider.isOnline ? 'status-active' : 'unverified'} ml-2`}>
+                    {selectedRider.status === 'suspended' ? 'SUSPENDED' : statusMap[selectedRider._id] ? statusMap[selectedRider._id].toUpperCase() : selectedRider.isOnline ? 'ONLINE' : 'OFFLINE'}
+                  </span>
                 </p>
                 <p>
                   <strong>Verification:</strong> 
                   <span className={`badge ${selectedRider.isVerified ? 'verified' : 'unverified'} ml-2`}>
-                    {selectedRider.isVerified ? 'VERIFIED' : 'UNVERIFIED'}
+                    {selectedRider.isVerified ? '✓ VERIFIED' : 'UNVERIFIED'}
                   </span>
                 </p>
               </div>
@@ -331,10 +355,19 @@ const RiderDetails = () => {
               <div className="action-panel">
                 <h3>Admin Actions</h3>
                 <div className="action-buttons">
-                  {!selectedRider.isVerified && (
+                  {selectedRider.isVerified ? (
                     <button 
                       className="btn-verify" 
-                      onClick={() => handleStatusChange('active', true)}
+                      onClick={() => handleStatusChange(selectedRider.status || 'active', false)}
+                      disabled={isUpdating}
+                      style={{ background: '#f59e0b' }}
+                    >
+                      Mark as Unverified
+                    </button>
+                  ) : (
+                    <button 
+                      className="btn-verify" 
+                      onClick={() => handleStatusChange(selectedRider.status || 'active', true)}
                       disabled={isUpdating}
                     >
                       Verify & Activate
