@@ -9,6 +9,7 @@ interface Rider {
   phone: string;
   riderId?: string;
   isVerified: boolean;
+  isOnline?: boolean;
   status: 'pending' | 'active' | 'suspended';
   avatar?: string;
   documents?: {

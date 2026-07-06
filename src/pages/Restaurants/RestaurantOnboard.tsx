@@ -20,7 +20,7 @@ const RestaurantOnboard = () => {
   const [mapError, setMapError] = useState('');
   const [autocompleteError, setAutocompleteError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successData, setSuccessData] = useState<{ id: string, name: string } | null>(null);
+  const [successData, setSuccessData] = useState<{ id: string, key?: string, name: string } | null>(null);
 
   const mapRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
