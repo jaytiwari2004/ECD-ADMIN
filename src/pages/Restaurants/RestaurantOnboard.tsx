@@ -233,7 +233,7 @@ const RestaurantOnboard = () => {
     <div className="restaurant-onboard">
       <div className="page-header">
         <h1>Manual Onboarding</h1>
-        <p>Add a new restaurant partner to the platform</p>
+        <p>Add a new restaurant partner to the platform (Limit: 1000 Restaurants)</p>
       </div>
 
       <div className="onboard-content">
