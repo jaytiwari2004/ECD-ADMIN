@@ -1,5 +1,5 @@
 // export const API_BASE_URL = 'https://ecd-bk-dep.onrender.com/api/v1'; // Local backend
-export const API_BASE_URL = 'http://localhost:5000/api/v1'; // Local backend
+export const API_BASE_URL = 'https://ecd-bk-dep.onrender.com/api/v1'; // Deployed backend
 
 export const getAuthToken = () => {
     return localStorage.getItem('token') || '';
