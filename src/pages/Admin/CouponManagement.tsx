@@ -117,16 +117,22 @@ const CouponManagement = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const dataToSubmit = {
+        ...formData,
+        validFrom: formData.validFrom ? new Date(formData.validFrom).toISOString() : '',
+        validTo: formData.validTo ? new Date(formData.validTo).toISOString() : '',
+      };
+
       if (editingId) {
         await apiFetch(`/coupons/admin/update/${editingId}`, {
           method: 'PUT',
-          body: JSON.stringify(formData)
+          body: JSON.stringify(dataToSubmit)
         });
         alert('Coupon updated successfully!');
       } else {
         await apiFetch('/coupons/admin/create', {
           method: 'POST',
-          body: JSON.stringify(formData)
+          body: JSON.stringify(dataToSubmit)
         });
         alert('Coupon created successfully!');
       }
