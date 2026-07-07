@@ -7,10 +7,12 @@ import './RestaurantOverview.css';
 interface Restaurant {
   _id: string;
   name: string;
-  slug?: string;
+  categories: string[];
   isActive: boolean;
+  isOnline: boolean;
   orderCount: number;
   walletBalance: number;
+  featured: boolean;
   logo?: string;
   coverImage?: string;
   accountDetail?: string; // Bank passbook
@@ -187,22 +189,36 @@ const RestaurantOverview = () => {
                     <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Click to manage menu</p>
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  <button 
-                    onClick={(e) => toggleStatus(e, restaurant._id, restaurant.isActive)}
-                    style={{ 
-                      padding: '0.3rem 0.6rem', 
-                      borderRadius: '20px', 
-                      fontSize: '0.75rem', 
-                      fontWeight: 600,
-                      border: 'none',
-                      cursor: 'pointer',
-                      background: restaurant.isActive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                      color: restaurant.isActive ? '#10b981' : '#ef4444'
-                    }}
-                  >
-                    {restaurant.isActive ? 'Online' : 'Offline'}
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span 
+                      style={{ 
+                        padding: '0.3rem 0.6rem', 
+                        borderRadius: '20px', 
+                        fontSize: '0.75rem', 
+                        fontWeight: 600,
+                        background: restaurant.isOnline ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        color: restaurant.isOnline ? '#10b981' : '#ef4444',
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                    >
+                      {restaurant.isOnline ? 'Online' : 'Offline'}
+                    </span>
+                    <button 
+                      onClick={(e) => toggleStatus(e, restaurant._id, restaurant.isActive)}
+                      style={{ 
+                        padding: '0.3rem 0.6rem', 
+                        borderRadius: '20px', 
+                        fontSize: '0.75rem', 
+                        fontWeight: 600,
+                        border: 'none',
+                        cursor: 'pointer',
+                        background: restaurant.isActive ? 'rgba(59, 130, 246, 0.1)' : 'rgba(107, 114, 128, 0.1)',
+                        color: restaurant.isActive ? '#3b82f6' : '#6b7280'
+                      }}
+                    >
+                      {restaurant.isActive ? 'Active' : 'Blocked'}
+                    </button>
                   <button
                     onClick={(e) => openEditModal(e, restaurant)}
                     style={{
