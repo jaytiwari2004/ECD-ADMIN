@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Store, PlusCircle, Menu, ShieldAlert, Settings, Users, Star, Sliders, Image as ImageIcon, BellRing, Activity } from 'lucide-react';
+import { LayoutDashboard, Store, PlusCircle, Menu, ShieldAlert, Settings, Users, Star, Sliders, Image as ImageIcon, BellRing, Activity, CheckCircle } from 'lucide-react';
 import './Sidebar.css';
 
 interface SidebarProps {
@@ -73,6 +73,10 @@ const Sidebar = ({ isCollapsed = false }: SidebarProps) => {
           <NavLink to="/restaurants/special-dishes" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"} title="Special Dishes">
             <Star size={20} />
             {!isCollapsed && <span>Special Dishes</span>}
+          </NavLink>
+          <NavLink to="/restaurants/approvals" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"} title="Menu Approvals" style={{ color: "#f59e0b" }}>
+            <CheckCircle size={20} />
+            {!isCollapsed && <span>Menu Approvals</span>}
           </NavLink>
         </div>
         <div className="nav-group">

@@ -12,6 +12,7 @@ import RestaurantOnboard from './pages/Restaurants/RestaurantOnboard';
 import MenuManagement from './pages/Restaurants/MenuManagement';
 import RestaurantPayouts from './pages/Restaurants/RestaurantPayouts';
 import SpecialDishes from './pages/Restaurants/SpecialDishes';
+import MenuApprovals from './pages/Restaurants/MenuApprovals';
 import AdminLogin from './pages/Auth/AdminLogin';
 import RiderPayouts from './pages/Riders/RiderPayouts';
 import RiderStatus from './pages/Riders/RiderStatus';
@@ -61,6 +62,7 @@ function App() {
                     <Route path="/restaurants/:id/menu" element={<MenuManagement />} />
                     <Route path="/restaurants/payouts" element={<RestaurantPayouts />} />
                     <Route path="/restaurants/special-dishes" element={<SpecialDishes />} />
+                    <Route path="/restaurants/approvals" element={<MenuApprovals />} />
                     <Route path="/riders/details" element={<RiderDetails />} />
                     <Route path="/riders/status" element={<RiderStatus />} />
                     <Route path="/riders/payouts" element={<RiderPayouts />} />
