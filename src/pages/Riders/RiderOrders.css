@@ -148,17 +148,19 @@
 
 .stats-bar {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: rgba(var(--primary-color-rgb), 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(var(--primary-color-rgb), 0.1);
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
+  background: var(--bg-primary, #ffffff);
+  padding: 1.25rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  flex: 1;
 }
 
 .stat-label {
@@ -182,6 +184,7 @@
 .history-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .history-table th,
@@ -203,10 +206,11 @@
 }
 
 .location-cell {
-  max-width: 300px;
   font-size: 0.9rem;
   line-height: 1.4;
-  word-break: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .date-cell {

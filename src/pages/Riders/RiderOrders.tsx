@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { apiFetch } from '../../utils/api';
+import { Download } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import './RiderOrders.css';
 
 interface RiderSummary {
@@ -69,11 +72,181 @@ const RiderOrders = () => {
     setHistory([]);
   };
 
+  const generateAllRidersInvoice = async () => {
+    if (riders.length === 0) return;
+    
+    const doc = new jsPDF();
+    
+    // Add Logo
+    try {
+      const img = new Image();
+      img.src = '/logo.png';
+      await new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve; 
+      });
+      doc.addImage(img, 'PNG', 14, 10, 25, 25);
+    } catch (e) {
+      console.log('Error loading logo');
+    }
+    
+    // Header
+    doc.setFontSize(26);
+    doc.setFont("times", "bolditalic");
+    doc.setTextColor(22, 101, 52); 
+    doc.text('ECD KART', 45, 20);
+    
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.text('All Riders Earnings Invoice', 45, 28);
+    
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 45, 34);
+    doc.text(`Total Riders: ${riders.length}`, 14, 42);
+    
+    const totalEarningsSum = riders.reduce((sum, r) => sum + r.totalEarnings, 0);
+    const totalOrdersSum = riders.reduce((sum, r) => sum + r.completedOrders, 0);
+    
+    // Boxes for Totals
+    doc.setDrawColor(200, 200, 200);
+    doc.setFillColor(248, 250, 252);
+    doc.rect(14, 46, 60, 15, "FD");
+    doc.setFontSize(9);
+    doc.text("TOTAL ORDERS", 18, 51);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(22, 101, 52);
+    doc.text(`${totalOrdersSum}`, 18, 57);
+
+    doc.setDrawColor(200, 200, 200);
+    doc.setFillColor(248, 250, 252);
+    doc.rect(80, 46, 70, 15, "FD");
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.text("TOTAL EARNINGS", 84, 51);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(22, 101, 52);
+    doc.text(`Rs. ${totalEarningsSum.toFixed(2)}`, 84, 57);
+
+    const tableData = riders.map((r) => [
+      r.name || 'Unknown',
+      r.riderId || 'N/A',
+      r.phone,
+      r.upi || 'N/A',
+      r.completedOrders,
+      `Rs. ${r.totalEarnings.toFixed(2)}`
+    ]);
+
+    autoTable(doc, {
+      startY: 70,
+      head: [['Rider Name', 'ID', 'Phone', 'UPI', 'Orders', 'Earnings']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillColor: [22, 101, 52] }
+    });
+
+    doc.save(`ECD_All_Riders_Invoice.pdf`);
+  };
+
+  const generateRiderHistoryInvoice = async () => {
+    if (!selectedRider || history.length === 0) return;
+    
+    const doc = new jsPDF();
+    
+    // Add Logo
+    try {
+      const img = new Image();
+      img.src = '/logo.png';
+      await new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve; 
+      });
+      doc.addImage(img, 'PNG', 14, 10, 25, 25);
+    } catch (e) {
+      console.log('Error loading logo');
+    }
+
+    doc.setFontSize(26);
+    doc.setFont("times", "bolditalic");
+    doc.setTextColor(22, 101, 52); 
+    doc.text('ECD KART', 45, 20);
+    
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Rider Invoice: ${selectedRider.name}`, 45, 28);
+    
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 45, 34);
+    doc.text(`Rider ID: ${selectedRider.riderId || 'N/A'}`, 14, 42);
+    doc.text(`Phone: ${selectedRider.phone}`, 14, 48);
+    doc.text(`UPI: ${selectedRider.upi || 'N/A'}`, 14, 54);
+    
+    // Boxes for Totals
+    doc.setDrawColor(200, 200, 200);
+    doc.setFillColor(248, 250, 252);
+    doc.rect(90, 42, 50, 15, "FD");
+    doc.setFontSize(9);
+    doc.text("TOTAL ORDERS", 94, 47);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(22, 101, 52);
+    doc.text(`${selectedRider.completedOrders}`, 94, 53);
+
+    doc.setDrawColor(200, 200, 200);
+    doc.setFillColor(248, 250, 252);
+    doc.rect(145, 42, 55, 15, "FD");
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.text("TOTAL EARNINGS", 149, 47);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(22, 101, 52);
+    doc.text(`Rs. ${selectedRider.totalEarnings.toFixed(2)}`, 149, 53);
+
+    const tableData = history.map((order) => [
+      new Date(order.createdAt).toLocaleDateString(),
+      order.orderNumber,
+      order.pickupLocation,
+      order.dropLocation,
+      `Rs. ${order.driverEarnings.toFixed(2)}`
+    ]);
+
+    autoTable(doc, {
+      startY: 70,
+      head: [['Date', 'Order #', 'Pickup', 'Drop', 'Earned']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillColor: [22, 101, 52] },
+      columnStyles: {
+        2: { cellWidth: 50 },
+        3: { cellWidth: 50 }
+      }
+    });
+
+    doc.save(`ECD_Rider_${selectedRider.name.replace(/\s+/g, '_')}_Invoice.pdf`);
+  };
+
   return (
     <div className="rider-orders-container">
-      <div className="orders-header">
-        <h1>Rider Orders</h1>
-        <p>Track completed deliveries and total earnings for all riders.</p>
+      <div className="orders-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1>Rider Orders</h1>
+          <p>Track completed deliveries and total earnings for all riders.</p>
+        </div>
+        <button 
+          className="btn btn-primary" 
+          onClick={generateAllRidersInvoice}
+          disabled={riders.length === 0 || loading}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        >
+          <Download size={18} />
+          Download Invoice
+        </button>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -130,7 +303,18 @@ const RiderOrders = () => {
           <div className="modal-content glass-panel large-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <h2>{selectedRider.name}'s Order History</h2>
-              <button className="close-btn" onClick={closeHistory}>×</button>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <button 
+                  className="btn btn-primary btn-sm" 
+                  onClick={generateRiderHistoryInvoice}
+                  disabled={history.length === 0 || historyLoading}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  <Download size={16} />
+                  Download Invoice
+                </button>
+                <button className="close-btn" onClick={closeHistory}>×</button>
+              </div>
             </div>
 
             <div className="modal-body">

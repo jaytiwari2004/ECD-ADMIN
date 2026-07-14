@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Store, PlusCircle, Menu, ShieldAlert, Settings, Users, Star, Sliders, Image as ImageIcon, BellRing, Activity, CheckCircle } from 'lucide-react';
+import { LayoutDashboard, Store, PlusCircle, Menu, ShieldAlert, Settings, Users, Star, Sliders, Image as ImageIcon, BellRing, Activity, CheckCircle, RefreshCcw } from 'lucide-react';
 import './Sidebar.css';
 
 interface SidebarProps {
@@ -50,6 +50,11 @@ const Sidebar = ({ isCollapsed = false }: SidebarProps) => {
         <NavLink to="/coupons" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"} title="Coupon Management" style={{ color: "#10b981" }}>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 15h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H2v-6z"/><path d="M22 15h-2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2v-6z"/><rect x="2" y="3" width="20" height="18" rx="2" ry="2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
           {!isCollapsed && <span>Coupon Management</span>}
+        </NavLink>
+
+        <NavLink to="/refunds" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"} title="Refund Management" style={{ color: "#3b82f6" }}>
+          <RefreshCcw size={20} />
+          {!isCollapsed && <span>Refunds</span>}
         </NavLink>
 
         <div className="nav-group">
