@@ -22,7 +22,7 @@ const SpecialDishes = () => {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Form State
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
@@ -75,7 +75,7 @@ const SpecialDishes = () => {
       formData.append('image', selectedFile);
 
       const token = localStorage.getItem('token');
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/popular-dishes`, {
         method: 'POST',
         headers: {
@@ -170,25 +170,25 @@ const SpecialDishes = () => {
               <h2>Add Special Dish</h2>
               <button className="close-btn" onClick={closeModal}>&times;</button>
             </div>
-            
+
             <form onSubmit={handleAddSubmit}>
               <div className="sd-modal-body">
                 <div className="form-group">
                   <label>Dish Name *</label>
-                  <input 
-                    type="text" 
-                    placeholder="e.g. Special Chicken Biryani" 
+                  <input
+                    type="text"
+                    placeholder="e.g. Special Chicken Biryani"
                     value={name}
                     onChange={e => setName(e.target.value)}
                     required
                   />
                 </div>
-                
+
                 <div className="form-group">
                   <label>Category</label>
-                  <input 
-                    type="text" 
-                    placeholder="e.g. Biryani" 
+                  <input
+                    type="text"
+                    placeholder="e.g. Biryani"
                     value={category}
                     onChange={e => setCategory(e.target.value)}
                   />
@@ -196,9 +196,9 @@ const SpecialDishes = () => {
 
                 <div className="form-group">
                   <label>Order Priority</label>
-                  <input 
-                    type="number" 
-                    placeholder="0" 
+                  <input
+                    type="number"
+                    placeholder="0"
                     value={ordering}
                     onChange={e => setOrdering(e.target.value)}
                   />
@@ -215,15 +215,15 @@ const SpecialDishes = () => {
                       <ImageIcon size={48} />
                     </div>
                   )}
-                  
+
                   <div className="file-input-wrapper">
                     <button type="button" className="btn-upload">
                       <ImageIcon size={20} />
                       {selectedFile ? selectedFile.name : "Choose an Image"}
                     </button>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
+                    <input
+                      type="file"
+                      accept="image/*"
                       onChange={handleFileChange}
                       required={!selectedFile}
                     />
